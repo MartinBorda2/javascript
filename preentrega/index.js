@@ -1,9 +1,6 @@
 let respuestaUsuario;
 
-
-
 let nombreUsuario = prompt("Buenaaasss \n¿Cual es tu nombre?");
-
 
 alert("¡Bienvenido Tutor " + nombreUsuario + "! A continuacion tendras que resolver una adivinanza de la cual nada mas contaras con 3 intentos para adivinar de que se trata. \n¡COMENZEMOS!");
 
@@ -23,8 +20,8 @@ function pedirRespuestaUsuario() {
     }
 }
 
-const verificarRespuesta = (respuestaIngresada) => {
-    if (respuestaIngresada != respuestaCorrecta) {
+const verificarRespuesta = (respuestaUsuario) => {
+    if (respuestaUsuario != respuestaCorrecta) {
       alert("La respuesta es incorrecta");
      } else {
       alert("Felicidades " + nombreUsuario + " has adivinado en " + intentos + " intentos");
@@ -33,10 +30,7 @@ const verificarRespuesta = (respuestaIngresada) => {
 
   const verificarIntentos = () => {
     if (intentos > 3) {
-      alert(
-        "Lo siento " +
-          nombreUsuario +
-          " has perdido no te quedan más intentos");
+      alert("Lo siento " + nombreUsuario + " has perdido no te quedan más intentos");
     }
   }
   while (respuestaUsuario !== respuestaCorrecta && intentos < 3) {
