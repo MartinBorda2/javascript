@@ -1,168 +1,121 @@
-class Producto {
-  constructor(marca, talle, cantidad,) {
-    this.marca = marca;
-    this.talle = talle;
-    this.cantidad = cantidad;
-  }
-
-  cambiarMarca(marca) {
-    this.Marca = marca;
-    alert("La marca ha sido modificado con éxito");
-  }
-
-  cambiarTalle(talle) {
-    if (isNaN(talle)) {
-      return alert("El talle debe ser un valor numérico");
-    }
-    this.talle = talle;
-    alert("El talle ha sido modificado con éxito");
-  }
-
-  cambiarCantidad(cantidad) {
-    this.cantidad = cantidad;
-    alert("La cantidad ha sido modificada con éxito");
-  }
-}
-
-const mostrarProductos = (productos) => {
-  console.clear();
-  console.log("Productos registrados");
-
-
-  productos.sort((a, b) => {
-    if (a.nombre > b.nombre) {
-      return 1;
-    } else if (a.nombre < b.nombre) {
-      return -1;
-    } else {
-      return 0;
-    }
-  });
-
-  productos.forEach(producto => console.log(producto));
-};
-
+const carritoElemento = document.querySelector("#carrito");
+const productosElemento = document.querySelector("#productos");
 
 let productos = [
-  new Producto("Vans", 40, 5),
-  new Producto("Le Coq Sportif", 38, 5),
-  new Producto("Fila", 42, 5),
-  new Producto("Jaguar", 37, 5),
+  {
+    nombre: "Remera",
+    precio: 200,
+    stock: 10,
+  },
+  {
+    nombre: "Pantalon",
+    precio: 500,
+    stock: 23,
+  },
+  {
+    nombre: "Camisa",
+    precio: 300,
+    stock: 5,
+  },
 ];
 
-mostrarProductos(productos);
+let carrito;
 
-
-
-
-const agregarProducto = () => {
-
-  let marca = prompt("Ingrese la marca del producto");
-  let talle = parseInt(prompt("Ingrese el talle del producto"))
-  let cantidad = parseInt(prompt("Ingrese la cantidad del producto"));
-
-
-  let producto = new Producto(marca, talle, cantidad);
-
-
-  productos.push(producto);
-
-
-  mostrarProductos(productos);
-};
-
-
-const eliminarProducto = () => {
-
-  const productoBuscado = productoExiste()
-
-  if (!productoBuscado) return
-
-  const confirmacion = confirm(`Estas seguro que deseas eliminar el producto ${productoBuscado.marca} ?`)
-
-  if (confirmacion) {
-    productos = productos.filter(producto => producto.marca.toLowerCase() !== productoBuscado.marca.toLowerCase());
-    mostrarProductos(productos);
-  } else {
-    alert("Eliminación cancelada")
-  }
-
-};
-
-const editarProducto = () => {
-
-  const productoBuscado = productoExiste()
-
-  if (!productoBuscado) return
-
-  alert("Menú editar producto:\n1 - Editar marca\n2 - Editar talle\n3 - Editar cantidad");
-
-  let opcion = parseInt(prompt("Ingrese una opción para editar"));
-
-  switch (opcion) {
-    case 1:
-      let marca = prompt("Ingrese la marca del producto");
-      productoBuscado.cambiarMarca(marca);
-      break;
-    case 2:
-      let talle = parseInt(prompt("Ingrese el talle del producto"));
-      pruductoBuscado.cambiarTalle(talle);
-      break;
-    case 3:
-      let cantidad = parseInt(prompt("Ingrese la cantidad del producto"));
-      productoBuscado.cambiarCantidad(cantidad);
-      break;
-    default:
-      alert("Ingrese una opción correcta");
-  }
-
-  mostrarProductos(productos);
+// Verificamos si no existe una clave llamada carrito en nos devuelve null, entonces la creamos
+if (localStorage.getItem("carrito") === null) {
+  carrito = [];
+} else {
+  carrito = localStorage.getItem("carrito");
 }
 
 
 
 
-const productoExiste = () => {
-
-  let marcaProducto = prompt("Ingrese la marca del producto");
-
-
-  let indice = productos.findIndex(
-    (producto) => producto.marca.toLowerCase() === marcaProducto.toLowerCase()
-  );
-
-  if (indice === -1) {
-
-    return alert(`El producto ${marcaProducto} no existe`);
-  }
-
-  return productos[indice];
-};
-
-let encendido = true;
-
-
-while (encendido) {
-  alert("A continuacion, tendrás la lista de productos de un local de Zapatillas para poder administrarla. En ella ya se encuentran algunos productos.")
-  alert("Lista principal de productos:\n1 - Agregar un producto\n2 - Eliminar un producto\n3 - Modificar un producto\n4 - Apagar");
-  let opcion = parseInt(prompt("Ingrese una opción"));
-
-  switch (opcion) {
-    case 1:
-      agregarProducto();
-      break;
-    case 2:
-      eliminarProducto();
-      break;
-    case 3:
-      editarProducto();
-      break;
-    case 4:
-      encendido = false;
-      break;
-    default:
-      alert("Inserte una opción correcta");
-  }
+const mostrarProductos = () => {
+    productosElemento.innerHTML = " ";
+    productos.forEach((producto, index) => {
+        let productoBox = document.createElement("div");
+        productoBox.innerHTML = `
+          <p>Nombre:${producto.nombre}</p>
+          <p>Precio: ${producto.precio}</p> 
+          <p>Stock: ${producto.stock}</p> 
+          `;
+        productosElemento.appendChild(productoBox);
+      
+        let btnAgregar = document.createElement("button");
+        btnAgregar.innerHTML = "Agregar";
+        productoBox.appendChild(btnAgregar);
+        
+        btnAgregar.onclick = () => agregarProducto(index);
+      });
 }
 
-alert("Gracias por su visita!");
+// A modo de ejemplo de como pueden utilizar variables de otro archivo js
+// Recuerden que para utilizar las variables de contador.js debe estar indexado en el html antes que el archivo actual
+const agregarProducto = (index) => {
+// Agregamos la cantidad del contador
+productos[index].cantidad =  contador; // la variable contador la toma del archivo contador.js
+
+// Verificamos que la cantidad deseada no supere el stock que tenemos
+if(contador > productos[index].stock) {
+    return alert(`No hay stock suficiente el máximo de productos es ${productos[index].stock}`)
+}
+
+// Validamos que el usuario agregue mínimo 1 producto
+if (contador === 0) {
+  return alert("Debe agregar por lo menos 1 producto al carrito");
+}
+
+// Agregamos el producto al carrito con su cantidad tomada del contador general, ustedes deberían hacer un contador
+// individual para cada producto, ya sea en las tarjetas de productos o en el carrito
+  carrito.push(productos[index]);
+
+  // Guardamos el carrito en el localStorage pasandolo a JSON
+  localStorage.setItem("carrito", JSON.stringify(carrito));
+
+  // Descontamos el stock del producto
+  productos[index].stock -= contador;
+
+  // Ponemos el contador en 0 y lo actualizamos
+  contador = 0;
+  actualizarContador(); // la función actualizar contador la usamos del archivo contador.js
+
+  // Mostramos los productos y el carrito actualizado
+  mostrarProductos();
+  mostrarCarrito();
+};
+
+const mostrarCarrito = () => {
+    
+  carritoElemento.innerHTML = " ";
+
+  // Traemos el carrito del localStorage y lo parseamos para que lo pueda leer javascript
+  carrito = JSON.parse(localStorage.getItem("carrito"));
+  
+  carrito.forEach((producto) => {
+    let productoBox = document.createElement("div");
+    productoBox.innerHTML = `
+    <p>Nombre:${producto.nombre}</p>
+    <p>Precio: ${producto.precio}</p> 
+    <p>Cantidad: ${producto.cantidad}</p> 
+    <p>Subtotal: ${producto.precio * producto.cantidad}</p> 
+    <p>-------------------------------------------</p> 
+    `;
+    carritoElemento.appendChild(productoBox);
+  });
+
+  // Agregamos un botón para vaciar el carrito
+  let vaciarCarrito = document.createElement("button");
+  vaciarCarrito.innerHTML = "Vaciar Carrito";
+  carritoElemento.appendChild(vaciarCarrito);
+
+  vaciarCarrito.onclick = () => {
+    carrito = [];
+    localStorage.setItem("carrito", JSON.stringify(carrito));
+    mostrarCarrito();
+  }
+
+};
+
+mostrarProductos();
+mostrarCarrito();
